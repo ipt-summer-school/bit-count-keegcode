@@ -20,7 +20,7 @@ function fullAdder(a: string, b: string): string {
         register.push(Sum.toString())
     }
 
-    return register.reverse().reduce((a, b) => a + b)
+    return ArrayToString(register.reverse())
 }
 
 function fromDecimalToBinary(num: number, bits: number): string {
@@ -32,26 +32,34 @@ function fromDecimalToBinary(num: number, bits: number): string {
             char += '0';
         } else {
             char += number % 2 === 0 ? '0' : '1';
-            number = number/2 
+            number = Math.floor(number/2) 
         }
     }
-    return char.split('').reverse().reduce((a: string, b: string) => a + b)
+    return ArrayToString(char.split('').reverse())
 }
 
 function toAdditionalCode(num: string) {
     const one: string = fromDecimalToBinary(1, num.split('').length);
     const negative = num.split('').map((value: string) => value === "1" ? "0" : "1").reduce((a: string, b: string) => a + b)
-    return fullAdder(negative, one).split('').reduce((a: string, b: string) => a + b)
+    return ArrayToString(fullAdder(negative, one).split(''))
+}
+
+function ArrayToString(array: string[]): string {
+    return array.reduce((a: string, b: string) => a + b)
 }
 
 function bitCount(a: number) {
     if(a < -(2**31) || a > 2**31 - 1) {
         throw new Error('Only 32-bits numbers allowed!')
     } else {
-        const binary = fromDecimalToBinary(a, 32)
-        const negative = toAdditionalCode(binary)
-        return [binary, negative]
+       const binary = fromDecimalToBinary(-a, 32)
+       if(a < 0) {
+           const negative = toAdditionalCode(binary);
+           console.log(binary, negative)
+           return ArrayToString(negative.split('').map((value: string) => value === "1" ? "1" : "")).length
+       }
+       return ArrayToString(binary.split('').map((value: string) => value === "1" ? "1" : "")).length
     }
 }
 
-console.log(bitCount(128))
+console.log(bitCount(-10))

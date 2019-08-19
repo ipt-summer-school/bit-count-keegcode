@@ -16,7 +16,7 @@ function fullAdder(a, b) {
         Cinput = Cout;
         register.push(Sum.toString());
     }
-    return register.reverse().reduce(function (a, b) { return a + b; });
+    return ArrayToString(register.reverse());
 }
 function fromDecimalToBinary(num, bits) {
     var char = '';
@@ -28,24 +28,31 @@ function fromDecimalToBinary(num, bits) {
         }
         else {
             char += number % 2 === 0 ? '0' : '1';
-            number = number / 2;
+            number = Math.floor(number / 2);
         }
     }
-    return char.split('').reverse().reduce(function (a, b) { return a + b; });
+    return ArrayToString(char.split('').reverse());
 }
 function toAdditionalCode(num) {
     var one = fromDecimalToBinary(1, num.split('').length);
     var negative = num.split('').map(function (value) { return value === "1" ? "0" : "1"; }).reduce(function (a, b) { return a + b; });
-    return fullAdder(negative, one).split('').reduce(function (a, b) { return a + b; });
+    return ArrayToString(fullAdder(negative, one).split(''));
+}
+function ArrayToString(array) {
+    return array.reduce(function (a, b) { return a + b; });
 }
 function bitCount(a) {
     if (a < -(Math.pow(2, 31)) || a > Math.pow(2, 31) - 1) {
         throw new Error('Only 32-bits numbers allowed!');
     }
     else {
-        var binary = fromDecimalToBinary(a, 32);
-        var negative = toAdditionalCode(binary);
-        return [binary, negative];
+        var binary = fromDecimalToBinary(-a, 32);
+        if (a < 0) {
+            var negative = toAdditionalCode(binary);
+            console.log(binary, negative);
+            return ArrayToString(negative.split('').map(function (value) { return value === "1" ? "1" : ""; })).length;
+        }
+        return ArrayToString(binary.split('').map(function (value) { return value === "1" ? "1" : ""; })).length;
     }
 }
-console.log(bitCount(128));
+console.log(bitCount(-10));
