@@ -16,6 +16,36 @@ function fullAdder(a, b) {
         Cinput = Cout;
         register.push(Sum.toString());
     }
-    return register.reduce(function (a, b) { return a + b; });
+    return register.reverse().reduce(function (a, b) { return a + b; });
 }
-console.log(fullAdder('0100000', '0000001'));
+function fromDecimalToBinary(num, bits) {
+    var char = '';
+    var number = num;
+    var power = Math.floor(Math.log(num) / Math.log(2));
+    for (var i = 0; i < bits; ++i) {
+        if (i > power) {
+            char += '0';
+        }
+        else {
+            char += number % 2 === 0 ? '0' : '1';
+            number = number / 2;
+        }
+    }
+    return char.split('').reverse().reduce(function (a, b) { return a + b; });
+}
+function toAdditionalCode(num) {
+    var one = fromDecimalToBinary(1, num.split('').length);
+    var negative = num.split('').map(function (value) { return value === "1" ? "0" : "1"; }).reduce(function (a, b) { return a + b; });
+    return fullAdder(negative, one).split('').reduce(function (a, b) { return a + b; });
+}
+function bitCount(a) {
+    if (a < -(Math.pow(2, 31)) || a > Math.pow(2, 31) - 1) {
+        throw new Error('Only 32-bits numbers allowed!');
+    }
+    else {
+        var binary = fromDecimalToBinary(a, 32);
+        var negative = toAdditionalCode(binary);
+        return [binary, negative];
+    }
+}
+console.log(bitCount(128));
