@@ -1,30 +1,21 @@
-var Diagram = /** @class */ (function () {
-    function Diagram(actions) {
-        var _this = this;
-        this.char = '';
-        this.fillChar = function () {
-            var actions = JSON.parse(JSON.stringify(_this.actions));
-            Object.keys(actions).map(function (key) {
-                for (var i = 1; i <= actions[key]; ++i) {
-                    _this.char += '|';
-                }
-                _this.char += actions[key] < 1 ? "" : " " + key + " " + actions[key] + " " + (actions[key] === 1 ? 'hour' : 'hours') + "\n";
-            });
-        };
-        this.draw = function () {
-            _this.fillChar();
-            console.log(_this.char);
-        };
-        this.actions = actions;
+function XOR(a, b) {
+    return (!a && b) || (a && !b) ? 1 : 0;
+}
+function AND(a, b) {
+    return a && b ? 1 : 0;
+}
+function OR(a, b) {
+    return a || b ? 1 : 0;
+}
+function fullAdder(a, b) {
+    var register = [];
+    var Cinput = 0;
+    for (var i = Math.max(a.length, b.length); i >= 0; --i) {
+        var Sum = XOR(XOR(+a[i], +b[i]), Cinput);
+        var Cout = OR(AND(+a[i], +b[i]), AND(XOR(+a[i], +b[i]), Cinput));
+        Cinput = Cout;
+        register.push(Sum.toString());
     }
-    return Diagram;
-}());
-new Diagram({
-    "Sleep": 8.30,
-    "Getting up from the bed": 0.15,
-    "Shower": 1,
-    "Meal": 0.20,
-    "Travel to KPI": 2,
-    "Study": 7,
-    "Ride home": 2
-}).draw();
+    return register.reduce(function (a, b) { return a + b; });
+}
+console.log(fullAdder('0100000', '0000001'));

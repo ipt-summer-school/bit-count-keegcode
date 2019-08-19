@@ -1,37 +1,24 @@
-interface Actions {
-    [key: string]: number
+function XOR(a: number, b: number): 0 | 1 {
+    return (!a && b) || (a && !b) ? 1 : 0;
 }
 
-class Diagram {
-    actions: Actions;
-    constructor(actions: Actions) {
-        this.actions = actions
-    }
-    
-    private char = ''
-
-    private fillChar = (): void => {
-        const actions: Actions = JSON.parse(JSON.stringify(this.actions));
-        Object.keys(actions).map(key => {
-            for(let i = 1; i <= actions[key]; ++i) {
-                this.char += '|'
-            }
-            this.char += actions[key] < 1 ? `` :  ` ${key} ${actions[key]} ${actions[key] === 1 ? 'hour' : 'hours'}\n`
-        })
-    }
-
-    public draw = (): void => {
-        this.fillChar();
-        console.log(this.char)
-    }
+function AND(a: number, b: number): 0 | 1 {
+    return a && b ? 1 : 0;
 }
 
-new Diagram({
-    "Sleep": 8.30,
-    "Getting up from the bed": 0.15,
-    "Shower": 1,
-    "Meal": 0.20,
-    "Travel to KPI": 2,
-    "Study": 7,
-    "Ride home": 2
-}).draw()
+function OR(a: number, b: number): 0 | 1 {
+    return a || b ? 1 : 0;
+}
+
+function fullAdder(a: string, b: string): string {
+    let register: string[] = [];
+    let Cinput = 0;
+    for(let i = Math.max(a.length, b.length); i >= 0 ; --i) {
+        let Sum:  0 | 1 = XOR(XOR(+a[i], +b[i]), Cinput);
+        let Cout:  0 | 1 = OR(AND(+a[i], +b[i]), AND(XOR(+a[i], +b[i]), Cinput));
+        Cinput = Cout;
+        register.push(Sum.toString())
+    }
+
+    return register.reduce((a, b) => a + b)
+}
